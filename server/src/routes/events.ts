@@ -1,21 +1,10 @@
 import { Router } from "express";
 import {
-  checker,
-  loginUser,
-  logOut,
-  registerUser,
-} from "../controllers/auth.controller";
-import {
   acceptInvite,
   createEvent,
   getAllMyEvents,
   getInvitationsForUser,
 } from "../controllers/events.controller";
-import {
-  getAllUser,
-  getUserFromID,
-  getUserFromUserName,
-} from "../controllers/user.controller";
 import { verifyToken } from "../middlewares/auth";
 const router = Router();
 
