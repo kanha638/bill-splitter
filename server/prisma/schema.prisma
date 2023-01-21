@@ -12,11 +12,47 @@ datasource db {
 }
 
 model Users {
-    id        String  @id @default(cuid())
-    firstName String
-    lastName  String? @default("")
-    mobileNum String
-    password  String
-    email     String  @unique
-    Disabled  Boolean @default(false)
+    id          String  @id @default(cuid())
+    firstName   String
+    lastName    String? @default("")
+    profile_urn String?
+    password    String
+    email       String  @unique
+    Disabled    Boolean @default(false)
+}
+
+model Event {
+    id           String    @id @default(cuid())
+    name         String
+    desc         String?
+    createrID    String
+    invitedUsers String[]
+    expenses     Expense[]
+    active_users String[]
+}
+
+model Expense {
+    id           String   @id @default(cuid())
+    event        Event    @relation(fields: [eventID], references: [id])
+    eventID      String
+    total_amount Int
+    desc         String?
+    buyers       Buyers[]
+    payers       Payers[]
+}
+
+model Buyers {
+    id           String   @id @default(cuid())
+    userID       String
+    amount_spent Float
+    Expense      Expense? @relation(fields: [expenseId], references: [id])
+    expenseId    String?
+}
+
+model Payers {
+    id          String   @id @default(cuid())
+    userID      String
+    amount_paid Float
+    Expense     Expense? @relation(fields: [expenseId], references: [id])
+    expenseId   String?
 }
