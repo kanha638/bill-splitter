@@ -10,8 +10,28 @@ const prisma = new PrismaClient();
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, username } = req.body;
     /* Hashing the password */
+    const checkUserNameValidity = await prisma.users.findUnique({
+      where: {
+        username: username,
+      },
+    });
+    if (checkUserNameValidity) {
+      return res.status(401).json({
+        message: "Username is not available",
+      });
+    }
+    const checkUser = await prisma.users.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (checkUser) {
+      return res.status(401).json({
+        message: "User Already Exists with this email",
+      });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const userData = await prisma.users.create({
@@ -19,6 +39,7 @@ export const registerUser = async (req: Request, res: Response) => {
         firstName: firstName,
         lastName: lastName,
         email: email,
+        username: username,
         password: hashedPassword,
       },
     });

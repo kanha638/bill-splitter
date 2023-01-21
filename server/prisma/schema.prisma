@@ -15,6 +15,7 @@ model Users {
     id          String  @id @default(cuid())
     firstName   String
     lastName    String? @default("")
+    username    String  @unique
     profile_urn String?
     password    String
     email       String  @unique
