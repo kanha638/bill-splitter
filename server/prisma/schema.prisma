@@ -38,7 +38,8 @@ model Expense {
     id           String   @id @default(cuid())
     event        Event    @relation(fields: [eventID], references: [id])
     eventID      String
-    total_amount Int
+    createrID    String
+    total_amount Float
     desc         String?
     buyers       Buyers[]
     payers       Payers[]
