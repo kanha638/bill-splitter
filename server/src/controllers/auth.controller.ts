@@ -135,7 +135,21 @@ export const loginUser = async (req: Request, res: Response) => {
         path: "/", //cookie valid for whole site
       })
     );
-    return res.json(userData);
+    const userData1 = await prisma.users.findUnique({
+      where: {
+        id: userData!.id,
+      },
+      select: {
+        id: true,
+        profile_urn: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        createdAt: true,
+        username: true,
+      },
+    });
+    return res.json(userData1);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Some Error Occured in backend" });
