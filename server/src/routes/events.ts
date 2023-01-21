@@ -5,7 +5,12 @@ import {
   logOut,
   registerUser,
 } from "../controllers/auth.controller";
-import { acceptInvite, createEvent } from "../controllers/events.controller";
+import {
+  acceptInvite,
+  createEvent,
+  getAllMyEvents,
+  getInvitationsForUser,
+} from "../controllers/events.controller";
 import {
   getAllUser,
   getUserFromID,
@@ -37,5 +42,21 @@ router.post("/create", verifyToken, createEvent);
     }
  */
 router.post("/invite/accept", verifyToken, acceptInvite);
+
+/*
+    THIS ROUTE IS FOR ACCEPTING THE INVITATION BY USER
+    REQUEST TYPE : GET 
+    API Route : {url}/api/event/invitations/my
+
+ */
+router.get("/invitations/my", verifyToken, getInvitationsForUser);
+
+/*
+    THIS ROUTE IS FOR GETTING ALL THE EVENTS ASSOCIATED WITH A USER
+    REQUEST TYPE : GET 
+    API Route : {url}/api/event/events/my
+
+ */
+router.get("/events/my", verifyToken, getAllMyEvents);
 
 export default router;

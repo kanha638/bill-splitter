@@ -41,6 +41,7 @@ export const registerUser = async (req: Request, res: Response) => {
         email: email,
         username: username,
         password: hashedPassword,
+        createdAt: new Date(),
       },
     });
 
