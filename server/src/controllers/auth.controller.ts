@@ -132,3 +132,12 @@ export const logOut = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const checker = async (req: Request, res: Response) => {
+  try {
+    const { email } = res.locals.user;
+    return res.json({ message: email });
+  } catch (error) {
+    return res.status(500).json({ message: "Some Error Occured" });
+  }
+};
