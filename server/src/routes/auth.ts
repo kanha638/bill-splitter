@@ -1,9 +1,11 @@
 import { Router } from "express";
 import {
+  checker,
   loginUser,
   logOut,
   registerUser,
 } from "../controllers/auth.controller";
+import { verifyToken } from "../middlewares/auth";
 
 const router = Router();
 
@@ -37,5 +39,7 @@ router.post("/login", loginUser);
    REQUEST TYPE : GET
    API Route : {url}/api/auth/logout
 */
-router.get("/logout", logOut);
+router.get("/logout", verifyToken, logOut);
+
+router.get("/checker", verifyToken, checker);
 export default router;
