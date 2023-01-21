@@ -15,8 +15,8 @@ const router = Router();
    body :
    {
     firstName : "",
+    username:"",
     lastName : "",
-    mobileNum : "",
     email : "",
     password : ""
    }

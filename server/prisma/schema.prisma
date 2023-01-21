@@ -57,3 +57,11 @@ model Payers {
     Expense     Expense? @relation(fields: [expenseId], references: [id])
     expenseId   String?
 }
+
+model Invitations {
+    id      String @id @default(cuid())
+    userID  String
+    eventID String
+    message String
+    token   String
+}

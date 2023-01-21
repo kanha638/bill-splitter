@@ -18,6 +18,7 @@ app.use(
 
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/user";
+import eventsRoutes from "./routes/events";
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/event", eventsRoutes);
 
 app.get("/", (_, res) => res.send("Hello From Bill Splitter Backend"));
 app.listen(PORT, async () => {
