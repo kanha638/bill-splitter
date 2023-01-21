@@ -12,14 +12,15 @@ datasource db {
 }
 
 model Users {
-    id          String  @id @default(cuid())
+    id          String   @id @default(cuid())
     firstName   String
-    lastName    String? @default("")
-    username    String  @unique
+    lastName    String?  @default("")
+    username    String   @unique
     profile_urn String?
     password    String
-    email       String  @unique
-    Disabled    Boolean @default(false)
+    email       String   @unique
+    createdAt   DateTime
+    Disabled    Boolean  @default(false)
 }
 
 model Event {
@@ -29,6 +30,7 @@ model Event {
     createrID    String
     invitedUsers String[]
     expenses     Expense[]
+    createdAt    DateTime
     active_users String[]
 }
 
@@ -40,6 +42,7 @@ model Expense {
     desc         String?
     buyers       Buyers[]
     payers       Payers[]
+    createdAt    DateTime
 }
 
 model Buyers {
@@ -59,9 +62,10 @@ model Payers {
 }
 
 model Invitations {
-    id      String @id @default(cuid())
-    userID  String
-    eventID String
-    message String
-    token   String
+    id        String   @id @default(cuid())
+    userID    String
+    eventID   String
+    message   String
+    token     String
+    createdAt DateTime
 }

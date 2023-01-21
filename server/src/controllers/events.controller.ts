@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import cookie from "cookie";
 import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
@@ -9,6 +7,7 @@ const prisma = new PrismaClient();
 export const createEvent = async (req: Request, res: Response) => {
   try {
     const { name, desc, invitedUsers } = req.body;
+
     const newEvent = await prisma.event.create({
       data: {
         createrID: res.locals.user.id,
@@ -16,6 +15,7 @@ export const createEvent = async (req: Request, res: Response) => {
         name: name,
         invitedUsers: invitedUsers,
         active_users: res.locals.user.id,
+        createdAt: new Date(),
       },
     });
 
@@ -29,12 +29,14 @@ export const createEvent = async (req: Request, res: Response) => {
           },
           process.env.EVENT_JWT_SECRET!
         );
+        const current_time1: any = Date.now();
         await prisma.invitations.create({
           data: {
             message: message,
             eventID: newEvent!.id,
             userID: user,
             token: token,
+            createdAt: new Date(),
           },
         });
       } catch (error) {
@@ -61,8 +63,6 @@ export const acceptInvite = async (req: Request, res: Response) => {
         if (err) {
           return res.status(500).json({ message: "Some Error Occured " });
         } else {
-          console.log(value.invitedUser);
-          console.log(res.locals.user.id);
           if (value.invitedUser !== res.locals.user.id) {
             return res.status(401).json({ message: "Unauthenticated" });
           }
@@ -117,4 +117,33 @@ export const acceptInvite = async (req: Request, res: Response) => {
     console.log(error);
     return res.status(500).json({ message: "Some Error Occured in backend" });
   }
+};
+
+export const getInvitationsForUser = async (req: Request, res: Response) => {
+  try {
+    const userID = res.locals.user.id;
+    const invitations = await prisma.invitations.findMany({
+      where: {
+        userID: userID,
+      },
+    });
+    return res.json(invitations);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Some Error Occured in backend" });
+  }
+};
+
+export const getAllMyEvents = async (req: Request, res: Response) => {
+  try {
+    const userID = res.locals.user.id;
+    const Events = await prisma.event.findMany({
+      where: {
+        active_users: {
+          has: userID,
+        },
+      },
+    });
+    return res.json(Events);
+  } catch (error) {}
 };
