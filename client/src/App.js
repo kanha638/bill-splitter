@@ -9,7 +9,7 @@ import { UserState } from "./features/userSlice";
 const App = () => {
   const userState = useSelector(UserState);
   return (
-    <>
+    <div style={{ height: "100vh" }}>
       <Router>
         <Routes>
           <Route
@@ -32,7 +32,7 @@ const App = () => {
           />
         </Routes>
       </Router>
-    </>
+    </div>
   );
 };
 

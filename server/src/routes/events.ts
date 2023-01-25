@@ -44,7 +44,6 @@ router.get("/invitations/my", verifyToken, getInvitationsForUser);
     THIS ROUTE IS FOR GETTING ALL THE EVENTS ASSOCIATED WITH A USER
     REQUEST TYPE : GET 
     API Route : {url}/api/event/events/my
-
  */
 router.get("/events/my", verifyToken, getAllMyEvents);
 
