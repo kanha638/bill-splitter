@@ -11,6 +11,7 @@ export const userSlice = createSlice({
     isLoggedIn: check,
     isPending: false,
     isErrors: false,
+    allUsers: [],
   },
   reducers: {
     AuthStart: (state) => {
@@ -42,6 +43,17 @@ export const userSlice = createSlice({
       state.isErrors = true;
       state.isPending = false;
     },
+    fetchUsersStart: (state) => {
+      state.isPending = true;
+    },
+    fetchUsersSuccess: (state, action) => {
+      state.isPending = false;
+      state.allUsers = action.payload;
+    },
+    fetchUserError: (state, action) => {
+      state.isErrors = true;
+      state.isPending = false;
+    },
   },
 });
 
@@ -52,6 +64,9 @@ export const {
   LogOutStart,
   LogOutSuccess,
   LogoutError,
+  fetchUserError,
+  fetchUsersStart,
+  fetchUsersSuccess,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user.userInfo;

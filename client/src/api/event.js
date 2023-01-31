@@ -1,5 +1,8 @@
 import axios from "axios";
 import {
+  createEventError,
+  createEventStart,
+  createEventSuccess,
   FetchEventError,
   FetchEventsStart,
   FetchEventSuccess,
@@ -23,5 +26,19 @@ export const getAllEvents = async (
     setCurrentList(result.data);
   } catch (error) {
     dispatch(FetchEventError(error.response));
+  }
+};
+
+export const createNewEvent = async (dispatch, data, setFlag = () => {}) => {
+  dispatch(createEventStart());
+  try {
+    const result = await API.post("/api/event/create", data, {
+      withCredentials: true,
+    });
+    dispatch(createEventSuccess(result.data));
+    setFlag((flag) => !flag);
+  } catch (error) {
+    console.log(error);
+    dispatch(createEventError(error.response));
   }
 };

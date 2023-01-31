@@ -24,11 +24,29 @@ const eventSlice = createSlice({
         localStorage.clear();
       }
     },
+    createEventStart: (state) => {
+      state.isErrors = false;
+      state.isPending = true;
+    },
+    createEventSuccess: (state, action) => {
+      state.isErrors = false;
+      state.isPending = false;
+    },
+    createEventError: (state, action) => {
+      state.isErrors = true;
+      state.isPending = false;
+    },
   },
 });
 
-export const { FetchEventError, FetchEventSuccess, FetchEventsStart } =
-  eventSlice.actions;
+export const {
+  FetchEventError,
+  FetchEventSuccess,
+  FetchEventsStart,
+  createEventError,
+  createEventStart,
+  createEventSuccess,
+} = eventSlice.actions;
 
 export const EventsData = (state) => state.event.events;
 
