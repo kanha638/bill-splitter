@@ -1,24 +1,104 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllEvents } from "../api/event";
+import { createNewEvent, getAllEvents } from "../api/event";
 import { EventsData, eventSelector } from "../features/eventSlice";
 import img from "../Images/logo.png";
+import chroma from "chroma-js";
 import { EventCard } from "./EventCard";
+import makeAnimated from "react-select/animated";
+import Select from "react-select";
+import { getAllUser } from "../api/auth";
+import { UserState } from "../features/userSlice";
+import EventForm from "./EventForm";
+import { Button, Icon, Modal } from "semantic-ui-react";
+
+const initialValue = {
+  name: "",
+  desc: "",
+  invitedUsers: [],
+};
 export const EventList = () => {
   const dispatch = useDispatch();
+  const userState = useSelector(UserState);
   const eventData = useSelector(eventSelector);
   const [currentList, setCurrentList] = useState([]);
   const [eventList, setEventList] = useState([]);
   const [openForm, setOpenForm] = useState(false);
+  const animatedComponents = makeAnimated();
+  const [users, setUsers] = useState([]);
+  const [flag, setFlag] = useState(false);
+
+  const [eventForm, setEventForm] = useState(initialValue);
+
+  const colourStyles = {
+    control: (styles) => ({ ...styles, backgroundColor: "white" }),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+      const color = chroma(data.color);
+      return {
+        ...styles,
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+          ? data.color
+          : isFocused
+          ? color.alpha(0.1).css()
+          : undefined,
+        color: isDisabled
+          ? "#ccc"
+          : isSelected
+          ? chroma.contrast(color, "white") > 2
+            ? "white"
+            : "black"
+          : data.color,
+        cursor: isDisabled ? "not-allowed" : "default",
+
+        ":active": {
+          ...styles[":active"],
+          backgroundColor: !isDisabled
+            ? isSelected
+              ? data.color
+              : color.alpha(0.3).css()
+            : undefined,
+        },
+      };
+    },
+    multiValue: (styles, { data }) => {
+      const color = chroma(data.color);
+      return {
+        ...styles,
+        backgroundColor: color.alpha(0.1).css(),
+      };
+    },
+    multiValueLabel: (styles, { data }) => ({
+      ...styles,
+      color: data.color,
+    }),
+    multiValueRemove: (styles, { data }) => ({
+      ...styles,
+      color: data.color,
+      ":hover": {
+        backgroundColor: data.color,
+        color: "white",
+      },
+    }),
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
       await getAllEvents(dispatch, setEventList, setCurrentList);
     };
+    const fetchUsers = async () => {
+      if (userState?.allUsers.length === 0) {
+        await getAllUser(dispatch, setUsers, userState?.userInfo?.id);
+      } else {
+        setUsers(userState?.allUsers);
+      }
+    };
     return () => {
       fetchEvents();
+      fetchUsers();
     };
-  }, []);
+  }, [flag]);
 
   const searchHandler = (val) => {
     const newVal = eventList.filter((e) => {
@@ -29,6 +109,7 @@ export const EventList = () => {
     });
     setCurrentList(newVal);
   };
+
   return (
     <div className="px-4 py-6 sm:px-0">
       <div className="flex justify-center align-middle flex-wrap">
@@ -102,133 +183,27 @@ export const EventList = () => {
           </button>
         </div>
       </div>
-      {openForm && (
-        <form className="py-4 w-45 border px-5">
-          <div className="relative z-0 w-full mb-6 group ">
-            <input
-              type="text"
-              name="name"
-              id="floating_name"
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-gray-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              for="floating_name"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Event Name
-            </label>
-          </div>
+      <Modal
+        closeOnDimmerClick={false}
+        size={"large"}
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+      >
+        <Modal.Header>Create New Event</Modal.Header>
 
-          <div className="relative z-0 w-full mb-6 group">
-            <textarea
-              type="text"
-              name="desc"
-              id="floating_description"
-              className=" h-20 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              for="floating_description"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Description
-            </label>
-          </div>
-
-          <div className="grid md:grid-cols-2 md:gap-6">
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                type="text"
-                name="floating_first_name"
-                id="floating_first_name"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                for="floating_first_name"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                First name
-              </label>
-            </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                type="text"
-                name="floating_last_name"
-                id="floating_last_name"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                for="floating_last_name"
-                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Last name
-              </label>
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="text-white bg-gray-800 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Submit
-          </button>
-        </form>
-      )}
-
+        <Modal.Content>
+          <EventForm setFlag={setFlag} setOpenForm={setOpenForm} />
+        </Modal.Content>
+        <Modal.Actions>
+          <Button negative onClick={() => setOpenForm(false)}>
+            Cancel
+          </Button>
+        </Modal.Actions>
+      </Modal>
       <div className="flex gap-4 my-6 flex-wrap justify-start">
         {currentList.map((data, idx) => {
           return <EventCard key={idx} name={data.name} desc={data.desc} />;
         })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {currentList.map((data, idx) => {
-          return <EventCard key={idx} name={data.name} desc={data.desc} />;
-        })}
-        {/* {currentList.map((data, idx) => {
-          return (
-            <EventCard
-              key={idx}
-              name={"Family Function for only our family"}
-              desc={
-                "Hello this is kanha tiwari i am the best person her i want to say one thing that i am the best"
-              }
-            />
-          );
-        })} */}
       </div>
     </div>
   );
