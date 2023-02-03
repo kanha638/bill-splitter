@@ -26,19 +26,15 @@ You should have
 
    **1.3** Give these varialbe value
 
-   `DATABASE_URL= ""`
-
-   `NODE_ENV=development`
-
-   `JWT_SECRET= ""`
-
-   `REFRESH_JWT_SECRET=""`
-
-   `PORT= `
-
-   `ORIGIN=http://localhost:3000`
-
-   `COOKIE_EXPIRATION_TIME = 7200`
+   ```js
+   DATABASE_URL = ""
+   NODE_ENV = development
+   JWT_SECRET = ""
+   REFRESH_JWT_SECRET = ""
+   PORT = ""
+   ORIGIN=http://localhost:3000
+   COOKIE_EXPIRATION_TIME = 
+   ```
 
    **1.4** In database URL make you give your **postgres** DB URL
 
