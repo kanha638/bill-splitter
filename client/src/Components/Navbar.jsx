@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Fragment } from "react";
 import { LogOutUser } from "../api/auth";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
@@ -6,6 +6,9 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import logo from "../Images/Bill.png";
+import { Modal } from "flowbite-react";
+import { Button } from "semantic-ui-react";
+import EventForm from "./EventForm";
 const user = {
   name: "John Doe",
   email: "john@example.com",
@@ -29,9 +32,11 @@ function classNames(...classes) {
 export const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [flag, setFlag] = useState(false);
   const LogoutHandler = async () => {
     await LogOutUser(dispatch, navigate);
   };
+  const [openForm, setOpenForm] = useState(false);
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -101,6 +106,9 @@ export const Navbar = () => {
                                 onClick={() => {
                                   if (item.name === "Sign out") {
                                     LogoutHandler();
+                                  }
+                                  if (item.name === "Your Profile") {
+                                    setOpenForm(true);
                                   }
                                 }}
                                 className={classNames(
@@ -186,6 +194,9 @@ export const Navbar = () => {
                       if (item.name === "Sign out") {
                         LogoutHandler();
                       }
+                      if (item.name === "Your Profile") {
+                        setOpenForm(true);
+                      }
                     }}
                     className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                   >
@@ -195,6 +206,27 @@ export const Navbar = () => {
               </div>
             </div>
           </Disclosure.Panel>
+
+          <Modal
+            // closeOnDimmerClick={false}
+            size={"large"}
+            // open={openForm}
+            popup={true}
+            show={openForm}
+            size="6xl"
+            onClose={() => setOpenForm(false)}
+          >
+            <Modal.Header>Profile</Modal.Header>
+
+            <Modal.Body>
+              <EventForm setFlag={setFlag} setOpenForm={setOpenForm} />
+            </Modal.Body>
+            <Modal.Footer>
+              <Button negative onClick={() => setOpenForm(false)}>
+                Cancel
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </>
       )}
     </Disclosure>
