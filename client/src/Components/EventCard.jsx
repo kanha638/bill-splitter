@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+import { Image } from "semantic-ui-react";
 export const EventCard = ({ name, desc }) => {
   return (
     <div
@@ -7,8 +9,8 @@ export const EventCard = ({ name, desc }) => {
       style={{ width: "400px" }}
     >
       <a href="#">
-        <img
-          class="rounded-t-lg"
+        <Image
+          // class="rounded-t-lg"
           src="https://flowbite.com/docs/images/blog/image-1.jpg"
           alt=""
         />
@@ -19,12 +21,15 @@ export const EventCard = ({ name, desc }) => {
             {name}
           </h5>
         </a>
-        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{desc}</p>
-        <a
-          href="#"
+        <p class="truncate mb-3 font-normal text-gray-500 dark:text-gray-400">
+          {desc}
+        </p>
+
+        <Link
+          to="/event/123"
           class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
-          Read more
+          view
           <svg
             aria-hidden="true"
             class="w-4 h-4 ml-2 -mr-1"
@@ -38,7 +43,7 @@ export const EventCard = ({ name, desc }) => {
               clip-rule="evenodd"
             ></path>
           </svg>
-        </a>
+        </Link>
       </div>
     </div>
   );

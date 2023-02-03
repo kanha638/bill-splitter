@@ -200,7 +200,7 @@ export const EventList = () => {
           </Button>
         </Modal.Actions>
       </Modal>
-      <div className="flex gap-4 my-6 flex-wrap justify-start">
+      <div className="flex gap-4 my-6 flex-wrap justify-center">
         {currentList.map((data, idx) => {
           return <EventCard key={idx} name={data.name} desc={data.desc} />;
         })}
