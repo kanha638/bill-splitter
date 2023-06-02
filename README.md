@@ -1,9 +1,4 @@
 # Bill-Splitter
-
-## Can You Hack It? 2023
-
-#### This Website is a part of hackathon organized in Indian Institute Of Information Technology Jabalpur
-
 # Development Setup
 
 ## Requirement
